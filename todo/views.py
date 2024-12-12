@@ -8,6 +8,7 @@ from django.views.generic.edit import (
     UpdateView,
     DeleteView,
 )
+from .forms import TaskUpdateForm
 
 # Create your views here.
 
@@ -27,3 +28,20 @@ class TaskCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super(TaskCreate, self).form_valid(form)
+    
+class TaskUpdate(LoginRequiredMixin, UpdateView):
+    model = Task
+    success_url = reverse_lazy("task_list")
+    form_class = TaskUpdateForm
+    template_name = "todo/update_task.html"
+
+class DeleteView(LoginRequiredMixin, DeleteView):
+    model = Task
+    context_object_name = "task"
+    success_url = reverse_lazy("task_list")
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
