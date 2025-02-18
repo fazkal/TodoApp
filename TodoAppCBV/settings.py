@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "todo.apps.TodoConfig",
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # user manager config
 AUTH_USER_MODEL = 'accounts.User'
+
+# rest framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+    ]
+}
