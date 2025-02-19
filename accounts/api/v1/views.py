@@ -1,9 +1,12 @@
 from rest_framework import generics
-from .serializers import RegistrationSerializer,ChangePasswordSerializer
+from .serializers import (RegistrationSerializer,ChangePasswordSerializer,
+                          ProfileSerializer)
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
+from ...models import Profile
+from django.shortcuts import get_object_or_404
 
 User=get_user_model()
 
@@ -21,6 +24,7 @@ class RegistrationApiView(generics.GenericAPIView):
             return Response(data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
+
 # Define class for change password
 class ChangePasswordApiView(generics.GenericAPIView):
     model = User
@@ -41,3 +45,14 @@ class ChangePasswordApiView(generics.GenericAPIView):
             self.object.save()
             return Response({'details': 'Password changed successfully'},status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+
+# Define class for set user profile info
+class ProfileApiView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset,user=self.request.user.id)
+        return obj
