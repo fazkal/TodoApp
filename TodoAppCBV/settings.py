@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "todo.apps.TodoConfig",
     'rest_framework',
     'rest_framework_simplejwt',
+    'mail_templated',
 ]
 
 MIDDLEWARE = [
@@ -146,3 +147,12 @@ REST_FRAMEWORK = {
 
     ]
 }
+
+# Email configuration for send email via gmail
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS =True
+EMAIL_HOST ='smtp.gmail.com'
+EMAIL_HOST_USER ='test4mydev@gmail.com'
+# This is App password, no account's password:
+EMAIL_HOST_PASSWORD ='Jvgzltrhmmrvtpae'
+EMAIL_PORT =587
