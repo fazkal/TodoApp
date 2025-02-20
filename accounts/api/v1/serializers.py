@@ -25,6 +25,27 @@ class RegistrationSerializer(serializers.ModelSerializer):
         validated_data.pop('password1',None)
         return User.objects.create_user(**validated_data)
     
+
+# Define serializer for resend token activation
+class ActivationResendSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        try:
+            user_obj = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(
+                {"Details":"User does not exist"}
+                )
+        except User.is_verified:
+            raise serializers.ValidationError(
+                {"Details":"User is already activated and verified"}
+                )
+        attrs["user"] = user_obj
+        return super().validate(attrs)
+        
+
 # Define serializer for change password
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
@@ -40,6 +61,7 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError({"new_password": list(e.messages)})
 
         return super().validate(attrs)
+    
     
 class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source='user.email',read_only=True)
