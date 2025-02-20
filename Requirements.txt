@@ -5,4 +5,10 @@ pillow
 djangorestframework
 markdown
 django-filter
+
+
+# third party module
 djangorestframework-simplejwt
+
+# Email third party module
+django-mail-templated
