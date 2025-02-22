@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "todo.apps.TodoConfig",
     'rest_framework',
+    "corsheaders",
     'rest_framework_simplejwt',
     'mail_templated',
 ]
@@ -137,6 +138,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # user manager config
 AUTH_USER_MODEL = 'accounts.User'
+
+#AUTHENTICATION_BACKENDS = ModelBackend
+
+LOGIN_URL = "/accounts/api/v1/login"
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 # rest framework settings
 REST_FRAMEWORK = {
