@@ -4,15 +4,10 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect
 # Create your views here.
 
-class CustomLoginView(LoginView):
-    template_name = "accounts/login.html"
-    fields = "username","password"
-    redirect_authenticated_user = True
-
-    def get_success_url(self):
-        return reverse_lazy("task_list")
+'''If use FormView for register user:
 
 class RegisterPage(FormView):
     template_name = "accounts/register.html"
@@ -30,3 +25,11 @@ class RegisterPage(FormView):
         if self.request.user.is_authenticated:
             return redirect("task_list")
         return super(RegisterPage, self).get(*args, **kwargs)
+'''
+
+
+def indexView(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    else:
+        return render(request, "accounts/login.html")
