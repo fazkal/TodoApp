@@ -18,6 +18,9 @@ urlpatterns = [
     # resend activation
     path('activation/resend/',views.ActivationResendApiView.as_view(),name='activation-resend'),
 
+    # login
+    path("login/", views.CustomLoginView.as_view(), name="login"),
+
     # login jwt
     path('jwt/create/', TokenObtainPairView.as_view(), name='jwt-create'),
     path('jwt/refresh/', TokenRefreshView.as_view(), name='jwt-refresh'),

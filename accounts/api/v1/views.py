@@ -1,18 +1,21 @@
 from rest_framework import generics
 from .serializers import (RegistrationSerializer,ChangePasswordSerializer,
-                          ProfileSerializer,ActivationResendSerializer)
+                          ProfileSerializer,ActivationResendSerializer,LoginSerializer)
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from ...models import Profile
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404,render,redirect
 from mail_templated import EmailMessage
 from rest_framework_simplejwt.tokens import RefreshToken
 from .utils import EmailThreading
 import jwt
 from django.conf import settings
+from django.contrib.auth import login
+from django.utils.translation import gettext_lazy as _
+from django.http import JsonResponse
 from jwt.exceptions import ExpiredSignatureError,InvalidSignatureError
 
 User=get_user_model()
@@ -85,6 +88,32 @@ class ActivationResendApiView(generics.GenericAPIView):
         Refresh = RefreshToken.for_user(user)
         return str(Refresh.access_token)
     
+
+# Define class for customize login user
+class CustomLoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def get(self,request,*args,**kwargs):
+        return render(request,'accounts/login.html')
+
+    def post(self, request, *args, **kwargs):
+        """
+        Login view to get user credentials
+        """
+        serializer = self.serializer_class(data=request.data, many=False)
+
+        if serializer.is_valid():
+            user = serializer.validated_data.get("user")
+            if user is not None and user.is_active:
+                login(request, user)
+
+                # return Response(serializer.data, status=status.HTTP_200_OK)
+                #return redirect('/')
+                return JsonResponse({'success': True, 'redirect_url': '/'}, status=status.HTTP_200_OK)
+
+            return render('accounts/login.html',{'error':'Username or password is wrong or inactive'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+     
 
 # Define class for change password
 class ChangePasswordApiView(generics.GenericAPIView):
