@@ -9,6 +9,7 @@ django-filter
 
 # third party module
 djangorestframework-simplejwt
+django-cors-headers
 
 # Email third party module
 django-mail-templated
