@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from  ...models import User,Profile
+from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
+from django.utils.translation import gettext_lazy as _
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(max_length=255,write_only=True)
@@ -44,6 +46,37 @@ class ActivationResendSerializer(serializers.Serializer):
                 )
         attrs["user"] = user_obj
         return super().validate(attrs)
+    
+
+#Define serializer for login
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+    password = serializers.CharField(
+        label=_("Password"),
+        style={"input_type": "password"},
+        trim_whitespace=False,
+        max_length=128,
+        write_only=True,
+    )
+
+    def validate(self, data):
+        email = data.get("email")
+        password = data.get("password")
+
+        if email and password:
+            user = authenticate(
+                request=self.context.get("request"),
+                email=email,
+                password=password,
+            )
+            if not user:
+                msg = _("Unable to log in with provided credentials.")
+                raise serializers.ValidationError(msg, code="authorization")
+        else:
+            msg = _('Must include "email" and "password".')
+            raise serializers.ValidationError(msg, code="authorization")
+        data["user"] = user
+        return data
         
 
 # Define serializer for change password
