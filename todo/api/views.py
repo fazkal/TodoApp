@@ -1,15 +1,16 @@
 from .serializers import TaskSerializer
 from todo.models import Task
 from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import permissions,status
 from rest_framework.response import Response
 
 
-class TodoListApiView(viewsets.ModelViewSet):
+class TodoTasksApiView (viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+''' If we used ViewSet and DefaultRouter we should defined below functions
     def list(self, request):
         queryset = self.get_queryset()
         serializer = TaskSerializer(queryset, many=True)
@@ -20,21 +21,15 @@ class TodoListApiView(viewsets.ModelViewSet):
     
     def perform_create(self,serializer):
         serializer.save(user=self.request.user)
-
-
-class TodoDetailApiView(viewsets.ModelViewSet):
-    serializer_class = TaskSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    lookup_field = "todo_id"
-
-    def get_object(self, queryset=None):
-        obj = Task.objects.get(id=self.kwargs["todo_id"])
+    
+    def get_object(self, queryset=None):  
+        obj = get_object_or_404(Task,id=self.kwargs["todo_id"])
         return obj
 
     def delete(self, request, *args, **kwargs):
         object = self.get_object()
         object.delete()
-        return Response({"detail": "successfully removed"})
+        return Response({"detail": "successfully removed"},status=status.HTTP_204_NO_CONTENT)
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
@@ -44,6 +39,6 @@ class TodoDetailApiView(viewsets.ModelViewSet):
         serializer = TaskSerializer(
             data=request.data, instance=object, many=False
         )
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data)'''
