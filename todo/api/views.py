@@ -1,16 +1,21 @@
 from .serializers import TaskSerializer
 from todo.models import Task
+from accounts.models import Profile
 from rest_framework import viewsets
-from rest_framework import permissions,status
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOwnerOrReadOnly
 
 
 class TodoTasksApiView (viewsets.ModelViewSet):
-    queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_profile = Profile.objects.get(user=self.request.user)
+        return Task.objects.filter(user=user_profile)
 
 ''' If we used ViewSet and DefaultRouter we should defined below functions
+from rest_framework.response import Response
     def list(self, request):
         queryset = self.get_queryset()
         serializer = TaskSerializer(queryset, many=True)
