@@ -1,6 +1,7 @@
 from .serializers import TaskSerializer
 from todo.models import Task
 from accounts.models import Profile
+from .paginations import DefaultPagination
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,6 +15,7 @@ class TodoTasksApiView (viewsets.ModelViewSet):
     filterset_fields = ["id", "complete"]
     search_fields = ["title"]
     ordering_fields = ["id","title"]
+    pagination_class = DefaultPagination
 
     def get_queryset(self):
         user_profile = Profile.objects.get(user=self.request.user)
