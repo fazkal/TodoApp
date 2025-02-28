@@ -3,16 +3,22 @@ from todo.models import Task
 from accounts.models import Profile
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsOwnerOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 
 class TodoTasksApiView (viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ["id", "complete"]
+    search_fields = ["title"]
+    ordering_fields = ["id","title"]
 
     def get_queryset(self):
         user_profile = Profile.objects.get(user=self.request.user)
         return Task.objects.filter(user=user_profile)
+    
 
 ''' If we used ViewSet and DefaultRouter we should defined below functions
 from rest_framework.response import Response
