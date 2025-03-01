@@ -3,13 +3,15 @@ Django==4.2.14
 sqlparse==0.5.3
 pillow
 djangorestframework
-markdown
-django-filter
+
 
 
 # third party module
 djangorestframework-simplejwt
 django-cors-headers
+drf-yasg[validation]
+markdown
+django-filter
 
 # Email third party module
 django-mail-templated
