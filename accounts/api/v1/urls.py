@@ -21,6 +21,9 @@ urlpatterns = [
     # login
     path("login/", views.CustomLoginView.as_view(), name="login"),
 
+    #logout
+    path("logout/", views.LogoutApiView.as_view(), name="logout"),
+
     # login jwt
     path('jwt/create/', TokenObtainPairView.as_view(), name='jwt-create'),
     path('jwt/refresh/', TokenRefreshView.as_view(), name='jwt-refresh'),

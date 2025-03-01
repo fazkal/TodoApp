@@ -13,7 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .utils import EmailThreading
 import jwt
 from django.conf import settings
-from django.contrib.auth import login
+from django.contrib.auth import login,logout
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
 from jwt.exceptions import ExpiredSignatureError,InvalidSignatureError
@@ -114,6 +114,19 @@ class CustomLoginView(generics.GenericAPIView):
             return render('accounts/login.html',{'error':'Username or password is wrong or inactive'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
      
+
+# Define class for customize logout user
+class LogoutApiView(generics.GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        """
+        Logout class
+        """
+        logout(request)
+        return Response(
+            {"non_field_errors": "successfully logged out"},
+            status=status.HTTP_200_OK,
+        )
+
 
 # Define class for change password
 class ChangePasswordApiView(generics.GenericAPIView):
